@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -28,9 +29,9 @@ load_dotenv(BASE_DIR / '.env', override=True)
 SECRET_KEY = 'django-insecure-w4*8!!eb-jgn_1-1k*47i&pxve)dedgc(-@f6c-ihasg&#+nl$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['raminent.pythonanywhere.com', 'localhost', '127.0.0.1']
 
 
 # Application definition

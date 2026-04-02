@@ -1,0 +1,9 @@
+django>=5.0
+pandas
+openpyxl
+twilio
+requests
+django-import-export
+django-apscheduler
+apscheduler
+python-dotenv
