@@ -32,6 +32,7 @@ def twilio_webhook(request):
 # --- DASHBOARD VIEWS ---
 def dashboard_home(request):
     total_employees = Employee.objects.count()
+
     total_messages = MessageLog.objects.count()
     successful = MessageLog.objects.filter(status='SENT').count()
     success_rate = int((successful / total_messages * 100)) if total_messages > 0 else 0
@@ -63,6 +64,10 @@ def dashboard_home(request):
         'telegram_logs': telegram_logs,
     }
     return render(request, 'dashboard.html', context)
+
+def guide_page(request):
+    return render(request, 'guide.html')
+
 
 def employees_list(request):
     if request.method == 'POST' and request.FILES.get('excel_file'):

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block page_title %}Sistem Kullanım Kılavuzu{% endblock %}
+{% block content %}
+<div class="glass-card" style="padding: 2.5rem; line-height: 1.8;">
+    <h2 style="color: var(--amber); margin-bottom: 2rem; display: flex; align-items: center; gap: 15px;">
+        <i class="fa-solid fa-circle-info"></i> Avrasya Bot Nasıl Çalışır?
+    </h2>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+        <!-- Feature 1 -->
+        <div style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border);">
+            <h3 style="color: var(--cyan); margin-bottom: 1rem;"><i class="fa-solid fa-cake-candle"></i> Otomatik Doğum Günü</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">
+                Sistem هر روز صبح ساعت 08:30 (یا زمان تنظیم شده) به صورت خودکار لیست اساتید را چک می‌کند. اگر تولد کسی باشد، پیام تبریک مخصوص با نام ایشان ارسال می‌شود.
+            </p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border);">
+            <h3 style="color: var(--cyan); margin-bottom: 1rem;"><i class="fa-solid fa-calendar-check"></i> Bayram ve Tatiller</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">
+                "Tatiller" sekmesinden eklediğiniz tüm özel günler sistem tarafından takip edilir. Belirlenen tarihte tüm personele toplu tebrik mesajı iletilir.
+            </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border);">
+            <h3 style="color: var(--cyan); margin-bottom: 1rem;"><i class="fa-solid fa-file-excel"></i> Toplu Veri Yönetimi</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">
+                Yüzlerce personeli tek tek eklemek yerine, Excel dosyanızı "Personeller" sayfasına sürükleyerek saniyeler içinde sisteme aktarabilirsiniz.
+            </p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border);">
+            <h3 style="color: var(--cyan); margin-bottom: 1rem;"><i class="fa-solid fa-chart-line"></i> Anlık İstatistikler</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">
+                Ana sayfadaki grafikler üzerinden hangi platformdan (WhatsApp/Telegram) kaç mesaj gittiğini و میزان موفقیت ارسال‌ها را به صورت زنده مشاهده کنید.
+            </p>
+        </div>
+    </div>
+
+    <div style="margin-top: 3rem; background: rgba(244, 159, 28, 0.05); padding: 2rem; border-radius: 16px; border: 1px solid var(--amber);">
+        <h3 style="color: var(--amber); margin-bottom: 1rem;"><i class="fa-solid fa-lightbulb"></i> Önemli Hatırlatmalar</h3>
+        <ul style="color: var(--text-main); font-size: 0.95rem; padding-left: 1.5rem;">
+            <li>Telefon numaralarını her zaman <b>+90</b> formatında ve boşluksuz giriniz.</li>
+            <li>Telegram üzerinden mesaj alabilmek için personelin botu bir kez <b>/start</b> yapması ve Chat ID'sinin kaydedilmesi gerekir.</li>
+            <li>Mesaj taslaklarında <b>{name}</b> kelimesini kullanarak kişiye özel hitap oluşturabilirsiniz.</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
