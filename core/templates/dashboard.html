@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% block page_title %}Sistem İstatistikleri{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="glass-card stat-card">
+        <div class="stat-icon blue"><i class="fa-solid fa-users"></i></div>
+        <div class="stat-info">
+            <h3>{{ total_employees }}</h3>
+            <p>Toplam Kayıtlı Personel</p>
+        </div>
+    </div>
+    <div class="stat-card glass-card">
+        <div class="stat-icon orange"><i class="fa-solid fa-paper-plane"></i></div>
+        <div class="stat-info">
+            <h3>{{ total_messages }}</h3>
+            <p>Gönderilen Otomatik Mesaj</p>
+        </div>
+    </div>
+    <div class="stat-card glass-card">
+        <div class="stat-icon green"><i class="fa-solid fa-check-circle"></i></div>
+        <div class="stat-info">
+            <h3>{{ success_rate }}%</h3>
+            <p>Erişim Başarı Oranı</p>
+        </div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+    <div class="glass-card">
+        <h3 style="margin-bottom: 1rem; color: var(--amber);"><i class="fa-solid fa-chart-line"></i> Mesaj Gönderim Trafiği (Son 7 Gün)</h3>
+        <canvas id="msgChart"></canvas>
+    </div>
+    
+    <div class="glass-card" style="display: flex; flex-direction: column; align-items: center;">
+        <h3 style="margin-bottom: 1rem; color: var(--cyan); width: 100%;"><i class="fa-solid fa-chart-pie"></i> Platform Dağılımı</h3>
+        <div style="width: 100%; max-width: 200px; flex: 1; display: flex; align-items: center;">
+            <canvas id="pieChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="table-container">
+    <h3 style="margin-bottom: 1rem; color: var(--cyan);"><i class="fa-solid fa-history"></i> Son Gönderilen Mesajlar</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>PERSONEL</th>
+                <th>MESAJ TÜRÜ</th>
+                <th>PLATFORM</th>
+                <th>DURUM</th>
+                <th>GÖNDERİM TARİHİ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in recent_logs %}
+            <tr>
+                <td style="font-weight: 500;">{{ log.employee.name|default:"Bilinmeyen" }}</td>
+                <td>{{ log.message_type }}</td>
+                <td>
+                    <i class="fa-brands fa-{{ log.platform|lower }}" style="color: {% if log.platform == 'WhatsApp' %}#25D366{% else %}#0088cc{% endif %}; font-size: 1.2rem; margin-right: 5px;"></i> 
+                    {{ log.platform }}
+                </td>
+                <td>
+                    <span class="badge {% if log.status == 'SENT' %}badge-active{% else %}badge-inactive{% endif %}">
+                        {{ log.status }}
+                    </span>
+                </td>
+                <td>{{ log.sent_at|date:"d M Y, H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">Henüz log kaydı bulunmuyor.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Line Chart
+    const ctx = document.getElementById('msgChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [{% for day in chart_labels %}'{{ day }}',{% endfor %}],
+            datasets: [{
+                label: 'Gönderilen Mesajlar',
+                data: [{% for val in chart_data %}{{ val }},{% endfor %}],
+                borderColor: '#F49F1C',
+                backgroundColor: 'rgba(244, 159, 28, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#3bd1f6',
+                pointBorderColor: '#fff',
+                pointRadius: 4
+            }]
+        },
+        options: {
+            color: '#94a3b8',
+            scales: {
+                y: { grid: { color: 'rgba(188, 227, 235, 0.05)' }, ticks: { color: '#94a3b8', stepSize: 1 } },
+                x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // Pie Chart
+    const ctxPie = document.getElementById('pieChart').getContext('2d');
+    new Chart(ctxPie, {
+        type: 'doughnut',
+        data: {
+            labels: ['WhatsApp', 'Telegram'],
+            datasets: [{
+                data: [{{ whatsapp_logs|default:0 }}, {{ telegram_logs|default:0 }}],
+                backgroundColor: [
+                    'rgba(37, 211, 102, 0.8)', // WhatsApp Green
+                    'rgba(0, 136, 204, 0.8)'   // Telegram Blue
+                ],
+                borderColor: 'transparent',
+                borderWidth: 0,
+                hoverOffset: 5
+            }]
+        },
+        options: {
+            color: '#94a3b8',
+            cutout: '65%',
+            plugins: {
+                legend: { 
+                    position: 'bottom',
+                    labels: { color: '#94a3b8', padding: 20, font: { family: 'Outfit' } }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

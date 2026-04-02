@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avrasya Notification System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --bg-color: #0b1120;
+            --sidebar-bg: rgba(26, 59, 122, 0.15);
+            --card-bg: rgba(26, 59, 122, 0.25);
+            --navy-blue: #1A3B7A;
+            --amber: #F49F1C;
+            --cyan: #3bd1f6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(188, 227, 235, 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
+        body::before {
+            content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(59,209,246,0.05) 0%, rgba(11,17,32,1) 60%);
+            z-index: -1; pointer-events: none;
+        }
+        /* Sidebar */
+        .sidebar {
+            width: 280px; background: var(--sidebar-bg); backdrop-filter: blur(12px); border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; padding: 2rem; position: relative; overflow: hidden;
+        }
+        .sidebar::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(to bottom, var(--amber), var(--cyan));
+        }
+        .logo-area { text-align: center; margin-bottom: 3rem; }
+        .logo-area h2 { font-weight: 700; color: var(--text-main); font-size: 1.5rem; display: flex; align-items: center; justify-content: center;gap: 10px;}
+        .logo-area h2 span { color: var(--amber); }
+        .logo-area i { font-size: 2rem; color: var(--cyan); }
+        .nav-link {
+            display: flex; align-items: center; gap: 1rem; padding: 1rem 1.2rem; color: var(--text-muted); text-decoration: none;
+            border-radius: 12px; margin-bottom: 0.8rem; transition: all 0.3s ease; position: relative;
+        }
+        .nav-link:hover, .nav-link.active {
+            background: rgba(244, 159, 28, 0.1); color: var(--amber); transform: translateX(5px);
+        }
+        .nav-link i { font-size: 1.2rem; }
+        .main-content { flex: 1; padding: 2rem 3rem; overflow-y: auto; }
+        .header-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .header-main h1 { font-size: 2rem; font-weight: 600; text-shadow: 0 0 20px rgba(59, 209, 246, 0.3); }
+        .user-profile { display: flex; align-items: center; gap: 1rem; background: var(--card-bg); padding: 0.5rem 1rem; border-radius: 30px; border: 1px solid var(--border); }
+        /* Cards */
+        .glass-card {
+            background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--border);
+            border-radius: 16px; padding: 1.5rem; transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .glass-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { display: flex; align-items: center; gap: 1.5rem; }
+        .stat-icon { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .stat-icon.blue { background: rgba(59, 209, 246, 0.1); color: var(--cyan); }
+        .stat-icon.orange { background: rgba(244, 159, 28, 0.1); color: var(--amber); }
+        .stat-icon.green { background: rgba(46, 204, 113, 0.1); color: #2ecc71; }
+        .stat-info h3 { font-size: 2rem; font-weight: 700; }
+        .stat-info p { font-size: 0.9rem; color: var(--text-muted); }
+        /* Tables */
+        .table-container { background: var(--card-bg); border-radius: 16px; padding: 1rem; max-width: 100%; overflow-x: auto; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        td { font-size: 0.95rem; }
+        .badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .badge-active { background: rgba(46, 204, 113, 0.15); color: #2ecc71; }
+        .badge-inactive { background: rgba(231, 76, 60, 0.15); color: #e74c3c; }
+        .btn { padding: 0.8rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Outfit'; transition: all 0.3s; }
+        .btn-primary { background: linear-gradient(135deg, var(--amber), #f39c12); color: white; box-shadow: 0 4px 15px rgba(244, 159, 28, 0.3); }
+        .btn-primary:hover { box-shadow: 0 6px 20px rgba(244, 159, 28, 0.5); transform: translateY(-2px); }
+        /* Drag Drop Zone */
+        .upload-zone { border: 2px dashed var(--amber); border-radius: 16px; padding: 3rem; text-align: center; cursor: pointer; transition: all 0.3s; background: rgba(244, 159, 28, 0.05); margin-bottom: 2rem; display: block;}
+        .upload-zone:hover { background: rgba(244, 159, 28, 0.1); transform: scale(1.02); }
+        .upload-zone i { font-size: 3rem; color: var(--amber); margin-bottom: 1rem; }
+        .upload-zone h4 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+        input[type="file"] { display: none; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-area">
+            <h2><i class="fa-solid fa-graduation-cap"></i> Avrasya<span>Bot</span></h2>
+        </div>
+        <a href="{% url 'dashboard_home' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard_home' %}active{% endif %}">
+            <i class="fa-solid fa-chart-pie"></i> Genel Bakış
+        </a>
+        <a href="{% url 'employees_list' %}" class="nav-link {% if request.resolver_match.url_name == 'employees_list' %}active{% endif %}">
+            <i class="fa-solid fa-users"></i> Personel & Hocalar
+        </a>
+        <a href="{% url 'holidays_list' %}" class="nav-link {% if request.resolver_match.url_name == 'holidays_list' %}active{% endif %}">
+            <i class="fa-solid fa-calendar-star"></i> Tatiller & Etkinlikler
+        </a>
+        <!-- Using inline style to separate admin link to bottom -->
+        <div style="flex: 1;"></div>
+        <a href="/admin/" target="_blank" class="nav-link">
+            <i class="fa-solid fa-cog"></i> Gelişmiş Ayarlar
+        </a>
+    </div>
+    <div class="main-content">
+        <div class="header-main">
+            <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+            <div class="user-profile">
+                <i class="fa-solid fa-user-circle" style="font-size: 1.5rem; color: var(--cyan);"></i>
+                <span>Avrasya Rektörlüğü</span>
+            </div>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <script>
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 4000,
+                        icon: '{{ message.tags }}' === 'error' ? 'error' : 'success',
+                        title: '{{ message }}',
+                        background: '#1A3B7A',
+                        color: '#fff'
+                    });
+                </script>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

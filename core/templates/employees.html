@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block page_title %}Personel ve Hocalar{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data" id="uploadForm">
+    {% csrf_token %}
+    <label class="upload-zone" for="excel_file">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <h4>Toplu Ekleme İçin Excel Dosyasını Sürükleyin veya Tıklayın</h4>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">(İsim, Telefon, Doğum Tarihi vb. içeren Excel veya CSV)</p>
+        <input type="file" name="excel_file" id="excel_file" accept=".xlsx, .xls, .csv" onchange="document.getElementById('uploadForm').submit();">
+    </label>
+</form>
+
+<div class="table-container">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; align-items: center;">
+        <h3 style="color: var(--cyan);"><i class="fa-solid fa-user-tie"></i> Üniversite Personeli Listesi</h3>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>İSİM</th>
+                <th>ROL</th>
+                <th>DEPARTMAN</th>
+                <th>DOĞUM TARİHİ</th>
+                <th>İLETİŞİM</th>
+                <th>DURUM</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in employees %}
+            <tr>
+                <td style="font-weight: 600;">{{ emp.name }}</td>
+                <td>{{ emp.get_role_display }}</td>
+                <td>{{ emp.department }}</td>
+                <td>{{ emp.date_of_birth|date:"d M Y" }}</td>
+                <td>
+                    {% if emp.phone_number %}<i class="fa-brands fa-whatsapp" style="color: #25D366;"></i> {{ emp.phone_number }}<br>{% endif %}
+                    {% if emp.telegram_chat_id %}<i class="fa-brands fa-telegram" style="color: #0088cc;"></i> {{ emp.telegram_chat_id }}{% endif %}
+                </td>
+                <td>
+                    <span class="badge {% if emp.is_active %}badge-active{% else %}badge-inactive{% endif %}">
+                        {% if emp.is_active %}Aktif{% else %}Pasif{% endif %}
+                    </span>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">Sistemde kayıtlı personel bulunmamaktadır.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
