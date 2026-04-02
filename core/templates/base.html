@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -88,7 +89,8 @@
 <body>
     <div class="sidebar">
         <div class="logo-area">
-            <h2><i class="fa-solid fa-graduation-cap"></i> Avrasya<span>Bot</span></h2>
+            <img src="{% static 'img/Avrasya Logo.png' %}" alt="Avrasya Logo" style="width: 80px; height: auto; margin-bottom: 15px;">
+            <h2>Whatsapp<span>Bot</span></h2>
         </div>
         <a href="{% url 'dashboard_home' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard_home' %}active{% endif %}">
             <i class="fa-solid fa-chart-pie"></i> Genel Bakış
